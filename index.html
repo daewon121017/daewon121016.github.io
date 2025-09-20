@@ -1,122 +1,270 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>개인 포트폴리오</title>
-   <!-- Tailwind CSS CDN -->
-   <script src="https://cdn.tailwindcss.com"></script>
-   <style>
-       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-       body {
-           font-family: 'Inter', sans-serif;
-           background-color: #f0f4f8;
-           color: #333;
-           line-height: 1.6;
-       }
-       .container {
-           max-width: 1000px;
-           margin: auto;
-       }
-       .header-bg {
-           background-color: #3b82f6;
-           background-image: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-       }
-       .icon {
-           display: inline-block;
-           width: 24px;
-           height: 24px;
-           margin-right: 8px;
-           vertical-align: middle;
-       }
-   </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 블로그</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .header-bg {
+            background-color: #3b82f6;
+            background-image: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        .blog-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
 
-   <header class="header-bg text-white py-12 rounded-b-3xl">
-       <div class="container px-4">
-           <div class="flex items-center space-x-6">
-               <!-- 프로필 이미지 (임시) -->
-               <div class="w-24 h-24 rounded-full bg-white flex-shrink-0 border-4 border-white shadow-lg">
-                   <svg class="w-full h-full text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                       <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                   </svg>
-               </div>
-               <div>
-                   <h1 class="text-4xl font-bold tracking-tight">당신의 이름</h1>
-                   <p class="text-xl mt-1 opacity-90">당신의 직업 또는 슬로건</p>
-               </div>
-           </div>
-       </div>
-   </header>
+    <!-- 블로그 헤더 섹션 -->
+    <header class="header-bg text-white py-16 rounded-b-3xl text-center">
+        <div class="container px-4">
+            <h1 class="text-5xl font-bold tracking-tight">나만의 블로그</h1>
+            <p class="text-lg mt-3 opacity-90">당신의 생각, 경험, 그리고 이야기를 공유하세요.</p>
+        </div>
+    </header>
 
-   <main class="container px-4 py-12 -mt-12">
-       <!-- 자기소개 섹션 -->
-       <section id="about" class="bg-white p-8 rounded-2xl shadow-lg mb-8">
-           <h2 class="text-2xl font-semibold text-gray-800 mb-4">자기소개</h2>
-           <p class="text-gray-700 leading-relaxed">
-               이곳에 당신의 자기소개를 작성하세요. 당신의 경험, 관심사, 그리고 무엇을 하고 있는지에 대해 간단히 설명해 주세요.
-               당신의 강점, 가치관, 그리고 앞으로의 목표를 포함하면 좋습니다.
-           </p>
-       </section>
+    <main class="container px-4 py-12 -mt-12">
+        <!-- 로그인/사용자 정보 섹션 -->
+        <section class="bg-white p-6 rounded-2xl shadow-lg mb-8 flex items-center justify-between">
+            <div id="auth-status" class="flex items-center space-x-2">
+                <span id="user-info" class="text-sm text-gray-600">로그인 중...</span>
+            </div>
+            <button id="auth-button" class="bg-blue-600 text-white font-medium py-2 px-4 rounded-full hover:bg-blue-700 transition-colors duration-200">로그인</button>
+        </section>
 
-       <!-- 기술 스택 섹션 -->
-       <section id="skills" class="bg-white p-8 rounded-2xl shadow-lg mb-8">
-           <h2 class="text-2xl font-semibold text-gray-800 mb-4">기술 스택</h2>
-           <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-               <!-- 기술 아이템 예시 -->
-               <div class="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg">
-                   <img src="https://placehold.co/32x32/1d4ed8/fff?text=JS" alt="JavaScript" class="w-8 h-8 rounded">
-                   <span class="text-gray-700 font-medium">JavaScript</span>
-               </div>
-               <div class="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg">
-                   <img src="https://placehold.co/32x32/ef4444/fff?text=Py" alt="Python" class="w-8 h-8 rounded">
-                   <span class="text-gray-700 font-medium">Python</span>
-               </div>
-               <div class="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg">
-                   <img src="https://placehold.co/32x32/3b82f6/fff?text=React" alt="React" class="w-8 h-8 rounded">
-                   <span class="text-gray-700 font-medium">React</span>
-               </div>
-               <div class="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg">
-                   <img src="https://placehold.co/32x32/14b8a6/fff?text=Vue" alt="Vue" class="w-8 h-8 rounded">
-                   <span class="text-gray-700 font-medium">Vue.js</span>
-               </div>
-           </div>
-       </section>
+        <!-- 글쓰기 버튼 (로그인 시에만 보임) -->
+        <section id="write-post-section" class="bg-white p-6 rounded-2xl shadow-lg mb-8" style="display:none;">
+            <button id="new-post-btn" class="w-full bg-green-500 text-white font-bold py-3 px-4 rounded-full hover:bg-green-600 transition-colors duration-200">새 글 작성</button>
+        </section>
+        
+        <!-- 글쓰기 모달 (기본적으로 숨겨져 있음) -->
+        <div id="post-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex justify-center items-center p-4 hidden">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-6">
+                <h2 class="text-2xl font-bold mb-4" id="modal-title">새 글 작성</h2>
+                <form id="post-form">
+                    <input type="hidden" id="post-id">
+                    <div class="mb-4">
+                        <label for="post-title" class="block text-gray-700 font-medium mb-1">제목</label>
+                        <input type="text" id="post-title" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="post-content" class="block text-gray-700 font-medium mb-1">내용</label>
+                        <textarea id="post-content" rows="6" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" id="close-modal-btn" class="bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-full hover:bg-gray-400">취소</button>
+                        <button type="submit" class="bg-blue-600 text-white font-medium py-2 px-4 rounded-full hover:bg-blue-700" id="save-post-btn">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 블로그 게시물 목록 -->
+        <section id="blog-posts-list" class="grid grid-cols-1 gap-8"></section>
+    </main>
 
-       <!-- 포트폴리오 섹션 -->
-       <section id="portfolio" class="bg-white p-8 rounded-2xl shadow-lg mb-8">
-           <h2 class="text-2xl font-semibold text-gray-800 mb-4">포트폴리오</h2>
-           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-               <!-- 포트폴리오 아이템 예시 -->
-               <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
-                   <img src="https://placehold.co/600x400/e2e8f0/64748b?text=Project+1" alt="Project 1" class="rounded-lg mb-4">
-                   <h3 class="text-lg font-bold text-gray-800">프로젝트 1</h3>
-                   <p class="text-sm text-gray-600 mt-2">이곳에 프로젝트에 대한 간단한 설명을 작성하세요. 사용한 기술과 주요 기능을 포함하면 좋습니다.</p>
-               </div>
-               <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
-                   <img src="https://placehold.co/600x400/e2e8f0/64748b?text=Project+2" alt="Project 2" class="rounded-lg mb-4">
-                   <h3 class="text-lg font-bold text-gray-800">프로젝트 2</h3>
-                   <p class="text-sm text-gray-600 mt-2">이곳에 프로젝트에 대한 간단한 설명을 작성하세요. 사용한 기술과 주요 기능을 포함하면 좋습니다.</p>
-               </div>
-           </div>
-       </section>
+    <!-- 블로그 푸터 섹션 -->
+    <footer class="bg-gray-800 text-white text-center py-6 rounded-t-3xl mt-12">
+        <p class="text-sm opacity-70">&copy; 2024 Your Name. All Rights Reserved.</p>
+    </footer>
 
-       <!-- 연락처 섹션 -->
-       <section id="contact" class="bg-white p-8 rounded-2xl shadow-lg mb-8">
-           <h2 class="text-2xl font-semibold text-gray-800 mb-4">연락처</h2>
-           <div class="flex items-center space-x-4">
-               <svg class="icon text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                   <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-               </svg>
-               <a href="mailto:your.email@example.com" class="text-blue-600 hover:underline">your.email@example.com</a>
-           </div>
-       </section>
-   </main>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getFirestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
-   <footer class="bg-gray-800 text-white text-center py-6 rounded-t-3xl">
-       <p class="text-sm opacity-70">© 2024 Your Name. All Rights Reserved.</p>
-   </footer>
+        // Firebase 설정 (환경 변수 사용)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
 
+        // UI 요소 가져오기
+        const authButton = document.getElementById('auth-button');
+        const userInfoSpan = document.getElementById('user-info');
+        const writePostSection = document.getElementById('write-post-section');
+        const newPostBtn = document.getElementById('new-post-btn');
+        const postModal = document.getElementById('post-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const postForm = document.getElementById('post-form');
+        const blogPostsList = document.getElementById('blog-posts-list');
+        const savePostBtn = document.getElementById('save-post-btn');
+        const modalTitle = document.getElementById('modal-title');
+        const postIdInput = document.getElementById('post-id');
+
+        // Firebase 초기화
+        let app, db, auth;
+        let userId = null;
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            // 인증 상태 변화 감지
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    userInfoSpan.textContent = `로그인: ${userId}`;
+                    authButton.textContent = '로그아웃';
+                    writePostSection.style.display = 'block';
+                    loadPosts();
+                } else {
+                    userInfoSpan.textContent = '로그아웃됨';
+                    authButton.textContent = '로그인';
+                    writePostSection.style.display = 'none';
+                    blogPostsList.innerHTML = ''; // 로그아웃 시 게시물 목록 비우기
+                    
+                    // 인증 토큰이 없으면 익명으로 로그인 시도
+                    if (typeof __initial_auth_token === 'undefined') {
+                        try {
+                            await signInAnonymously(auth);
+                            console.log("익명 로그인 성공");
+                        } catch (error) {
+                            console.error("익명 로그인 실패:", error);
+                        }
+                    }
+                }
+            });
+
+            // 초기 인증 토큰으로 로그인
+            if (typeof __initial_auth_token !== 'undefined') {
+                try {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } catch (error) {
+                    console.error("커스텀 토큰 로그인 실패:", error);
+                }
+            }
+        } else {
+            console.error("Firebase 설정이 정의되지 않았습니다. 앱이 올바르게 작동하지 않을 수 있습니다.");
+        }
+
+        // 로그인/로그아웃 버튼 클릭 이벤트
+        authButton.addEventListener('click', () => {
+            if (auth.currentUser) {
+                signOut(auth);
+            } else {
+                // 커스텀 토큰이 없으면 익명 로그인 시도
+                if (typeof __initial_auth_token !== 'undefined') {
+                    signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    signInAnonymously(auth);
+                }
+            }
+        });
+
+        // 새 글 작성 버튼 클릭 이벤트
+        newPostBtn.addEventListener('click', () => {
+            modalTitle.textContent = '새 글 작성';
+            postForm.reset();
+            postIdInput.value = '';
+            postModal.classList.remove('hidden');
+        });
+
+        // 모달 닫기 버튼 클릭 이벤트
+        closeModalBtn.addEventListener('click', () => {
+            postModal.classList.add('hidden');
+        });
+
+        // 게시물 저장/수정 폼 제출 이벤트
+        postForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const postId = postIdInput.value;
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+
+            if (postId) {
+                // 게시물 수정
+                const postRef = doc(db, `/artifacts/${appId}/users/${userId}/blog_posts`, postId);
+                await updateDoc(postRef, {
+                    title: title,
+                    content: content
+                });
+            } else {
+                // 새 게시물 추가
+                await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/blog_posts`), {
+                    title: title,
+                    content: content,
+                    authorId: userId,
+                    createdAt: serverTimestamp()
+                });
+            }
+            postModal.classList.add('hidden');
+        });
+
+        // 게시물 불러오기 (실시간 업데이트)
+        function loadPosts() {
+            if (!db || !userId) return;
+
+            const postsRef = collection(db, `/artifacts/${appId}/users/${userId}/blog_posts`);
+            const q = query(postsRef, orderBy("createdAt", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                blogPostsList.innerHTML = '';
+                snapshot.forEach((doc) => {
+                    const post = doc.data();
+                    const postId = doc.id;
+                    const date = post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '날짜 없음';
+
+                    const postElement = document.createElement('div');
+                    postElement.className = 'bg-white p-8 rounded-2xl shadow-lg blog-card';
+                    postElement.innerHTML = `
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-2">${post.title}</h2>
+                        <p class="text-sm text-gray-500 mb-4">${date}</p>
+                        <p class="text-gray-700 leading-relaxed mb-4">${post.content}</p>
+                        <div class="flex space-x-2">
+                            <button class="edit-btn text-blue-600 font-medium hover:underline" data-id="${postId}">수정</button>
+                            <button class="delete-btn text-red-600 font-medium hover:underline" data-id="${postId}">삭제</button>
+                        </div>
+                    `;
+                    blogPostsList.appendChild(postElement);
+                });
+
+                // 수정/삭제 버튼 이벤트 리스너 추가
+                document.querySelectorAll('.edit-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const postId = e.target.dataset.id;
+                        const postElement = e.target.closest('.blog-card');
+                        const title = postElement.querySelector('h2').textContent;
+                        const content = postElement.querySelector('p:nth-of-type(2)').textContent;
+                        
+                        document.getElementById('post-id').value = postId;
+                        document.getElementById('post-title').value = title;
+                        document.getElementById('post-content').value = content;
+                        modalTitle.textContent = '글 수정';
+                        postModal.classList.remove('hidden');
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const postId = e.target.dataset.id;
+                        if (confirm('정말로 이 글을 삭제하시겠습니까?')) {
+                            const postRef = doc(db, `/artifacts/${appId}/users/${userId}/blog_posts`, postId);
+                            await deleteDoc(postRef);
+                        }
+                    });
+                });
+            });
+        }
+    </script>
 </body>
 </html>
