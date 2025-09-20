@@ -45,9 +45,9 @@
         <!-- 로그인/사용자 정보 섹션 -->
         <section class="bg-white p-6 rounded-2xl shadow-lg mb-8 flex items-center justify-between">
             <div id="auth-status" class="flex items-center space-x-2">
-                <span id="user-info" class="text-sm text-gray-600">로그인 중...</span>
+                <span id="user-info" class="text-sm text-gray-600">익명 로그인 진행 중...</span>
             </div>
-            <button id="auth-button" class="bg-blue-600 text-white font-medium py-2 px-4 rounded-full hover:bg-blue-700 transition-colors duration-200">로그인</button>
+            <button id="auth-button" class="bg-blue-600 text-white font-medium py-2 px-4 rounded-full hover:bg-blue-700 transition-colors duration-200" disabled>로그인</button>
         </section>
 
         <!-- 글쓰기 버튼 (로그인 시에만 보임) -->
@@ -62,6 +62,228 @@
                 <form id="post-form">
                     <input type="hidden" id="post-id">
                     <div class="mb-4">
+                        <label for="post-title" class="block text-gray-700 font-medium mb-1">제목</label>
+                        <input type="text" id="post-title" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="post-content" class="block text-gray-700 font-medium mb-1">내용</label>
+                        <textarea id="post-content" rows="6" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" id="close-modal-btn" class="bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-full hover:bg-gray-400">취소</button>
+                        <button type="submit" class="bg-blue-600 text-white font-medium py-2 px-4 rounded-full hover:bg-blue-700" id="save-post-btn">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 블로그 게시물 목록 -->
+        <section id="blog-posts-list" class="grid grid-cols-1 gap-8"></section>
+    </main>
+
+    <!-- 블로그 푸터 섹션 -->
+    <footer class="bg-gray-800 text-white text-center py-6 rounded-t-3xl mt-12">
+        <p class="text-sm opacity-70">&copy; 2024 Your Name. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getFirestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+        // Firebase 설정 (환경 변수 사용)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // UI 요소 가져오기
+        const authButton = document.getElementById('auth-button');
+        const userInfoSpan = document.getElementById('user-info');
+        const writePostSection = document.getElementById('write-post-section');
+        const newPostBtn = document.getElementById('new-post-btn');
+        const postModal = document.getElementById('post-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const postForm = document.getElementById('post-form');
+        const blogPostsList = document.getElementById('blog-posts-list');
+        const savePostBtn = document.getElementById('save-post-btn');
+        const modalTitle = document.getElementById('modal-title');
+        const postIdInput = document.getElementById('post-id');
+
+        // Firebase 초기화
+        let app, db, auth;
+        let userId = null;
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            // 인증 상태 변화 감지
+            onAuthStateChanged(auth, async (user) => {
+                authButton.disabled = false; // 인증 상태가 확인되면 버튼 활성화
+                if (user) {
+                    userId = user.uid;
+                    userInfoSpan.textContent = `로그인: ${userId}`;
+                    authButton.textContent = '로그아웃';
+                    writePostSection.style.display = 'block';
+                    loadPosts();
+                } else {
+                    userId = null;
+                    userInfoSpan.textContent = '로그아웃됨';
+                    authButton.textContent = '로그인';
+                    writePostSection.style.display = 'none';
+                    blogPostsList.innerHTML = ''; // 로그아웃 시 게시물 목록 비우기
+                    
+                    // 인증 토큰이 없으면 익명으로 로그인 시도
+                    if (typeof __initial_auth_token === 'undefined') {
+                        try {
+                            await signInAnonymously(auth);
+                            console.log("익명 로그인 성공");
+                        } catch (error) {
+                            console.error("익명 로그인 실패:", error);
+                        }
+                    }
+                }
+            });
+
+            // 초기 인증 토큰으로 로그인
+            if (typeof __initial_auth_token !== 'undefined') {
+                try {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } catch (error) {
+                    console.error("커스텀 토큰 로그인 실패:", error);
+                    // 익명 로그인 시도
+                    try {
+                         await signInAnonymously(auth);
+                         console.log("커스텀 토큰 실패 후 익명 로그인 성공");
+                    } catch (anonError) {
+                         console.error("익명 로그인도 실패:", anonError);
+                    }
+                }
+            }
+        } else {
+            console.error("Firebase 설정이 정의되지 않았습니다. 앱이 올바르게 작동하지 않을 수 있습니다.");
+            userInfoSpan.textContent = '오류: Firebase 설정 누락';
+        }
+
+        // 로그인/로그아웃 버튼 클릭 이벤트
+        authButton.addEventListener('click', () => {
+            if (auth.currentUser) {
+                signOut(auth);
+            } else {
+                if (typeof __initial_auth_token !== 'undefined') {
+                    signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    signInAnonymously(auth);
+                }
+            }
+        });
+
+        // 새 글 작성 버튼 클릭 이벤트
+        newPostBtn.addEventListener('click', () => {
+            modalTitle.textContent = '새 글 작성';
+            postForm.reset();
+            postIdInput.value = '';
+            postModal.classList.remove('hidden');
+        });
+
+        // 모달 닫기 버튼 클릭 이벤트
+        closeModalBtn.addEventListener('click', () => {
+            postModal.classList.add('hidden');
+        });
+
+        // 게시물 저장/수정 폼 제출 이벤트
+        postForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const postId = postIdInput.value;
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+
+            if (postId) {
+                // 게시물 수정
+                const postRef = doc(db, `/artifacts/${appId}/users/${userId}/blog_posts`, postId);
+                await updateDoc(postRef, {
+                    title: title,
+                    content: content
+                });
+            } else {
+                // 새 게시물 추가
+                await addDoc(collection(db, `/artifacts/${appId}/users/${userId}/blog_posts`), {
+                    title: title,
+                    content: content,
+                    authorId: userId,
+                    createdAt: serverTimestamp()
+                });
+            }
+            postModal.classList.add('hidden');
+        });
+
+        // 게시물 불러오기 (실시간 업데이트)
+        function loadPosts() {
+            if (!db || !userId) {
+                blogPostsList.innerHTML = '<p class="text-center text-gray-500">로그인하면 글을 볼 수 있습니다.</p>';
+                return;
+            }
+
+            const postsRef = collection(db, `/artifacts/${appId}/users/${userId}/blog_posts`);
+            const q = query(postsRef, orderBy("createdAt", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                if (snapshot.empty) {
+                    blogPostsList.innerHTML = '<p class="text-center text-gray-500">아직 작성된 글이 없습니다. 새 글을 작성해 보세요!</p>';
+                } else {
+                    blogPostsList.innerHTML = '';
+                    snapshot.forEach((doc) => {
+                        const post = doc.data();
+                        const postId = doc.id;
+                        const date = post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '날짜 없음';
+
+                        const postElement = document.createElement('div');
+                        postElement.className = 'bg-white p-8 rounded-2xl shadow-lg blog-card';
+                        postElement.innerHTML = `
+                            <h2 class="text-2xl font-semibold text-gray-800 mb-2">${post.title}</h2>
+                            <p class="text-sm text-gray-500 mb-4">${date}</p>
+                            <p class="text-gray-700 leading-relaxed mb-4">${post.content}</p>
+                            <div class="flex space-x-2">
+                                <button class="edit-btn text-blue-600 font-medium hover:underline" data-id="${postId}">수정</button>
+                                <button class="delete-btn text-red-600 font-medium hover:underline" data-id="${postId}">삭제</button>
+                            </div>
+                        `;
+                        blogPostsList.appendChild(postElement);
+                    });
+                }
+
+                // 수정/삭제 버튼 이벤트 리스너 추가
+                document.querySelectorAll('.edit-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const postId = e.target.dataset.id;
+                        const postElement = e.target.closest('.blog-card');
+                        const title = postElement.querySelector('h2').textContent;
+                        const content = postElement.querySelector('p:nth-of-type(2)').textContent;
+                        
+                        document.getElementById('post-id').value = postId;
+                        document.getElementById('post-title').value = title;
+                        document.getElementById('post-content').value = content;
+                        modalTitle.textContent = '글 수정';
+                        postModal.classList.remove('hidden');
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const postId = e.target.dataset.id;
+                        if (confirm('정말로 이 글을 삭제하시겠습니까?')) {
+                            const postRef = doc(db, `/artifacts/${appId}/users/${userId}/blog_posts`, postId);
+                            await deleteDoc(postRef);
+                        }
+                    });
+                });
+            });
+        }
+    </script>
+</body>
+</html>                    <div class="mb-4">
                         <label for="post-title" class="block text-gray-700 font-medium mb-1">제목</label>
                         <input type="text" id="post-title" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
                     </div>
